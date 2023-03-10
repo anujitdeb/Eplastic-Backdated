@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="84d4a8a4-0a0f-4354-827d-5debead95511" name="Changes" comment="">
+    <list default="true" id="84d4a8a4-0a0f-4354-827d-5debead95511" name="Changes" comment="commit to new branch with bug fixed">
       <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/AdminAuth/AuthenticatedSessionController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/AdminAuth/AuthenticatedSessionController.php" afterDir="false" />
@@ -230,7 +230,7 @@
       <workItem from="1678435041568" duration="4451000" />
       <workItem from="1678459317359" duration="88000" />
       <workItem from="1678460226830" duration="7610000" />
-      <workItem from="1678468278272" duration="8889000" />
+      <workItem from="1678468278272" duration="9565000" />
     </task>
     <servers />
   </component>
@@ -247,5 +247,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="commit to new branch with bug fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="commit to new branch with bug fixed" />
   </component>
 </project>
