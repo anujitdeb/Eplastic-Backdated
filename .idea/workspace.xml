@@ -6,17 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="84d4a8a4-0a0f-4354-827d-5debead95511" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/AdminAuth/AuthenticatedSessionController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/AdminAuth/AuthenticatedSessionController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/AdminsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/AdminsController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DashboardController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/DashboardController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/UsersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/UsersController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Requests/createUserRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/createUserRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/auth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/seeders/AdminSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/AdminSeeder.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/seeders/UserSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/UserSeeder.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/backend/auth/login.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/auth/login.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/backend/auth/main.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/auth/main.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/auth/register.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/auth/register.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/backend/layouts/partials/sidebar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/layouts/partials/sidebar.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/backend/layouts/partials/topbar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/layouts/partials/topbar.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/backend/pages/admins/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/pages/admins/edit.blade.php" afterDir="false" />
@@ -229,7 +230,7 @@
       <workItem from="1678435041568" duration="4451000" />
       <workItem from="1678459317359" duration="88000" />
       <workItem from="1678460226830" duration="7610000" />
-      <workItem from="1678468278272" duration="7562000" />
+      <workItem from="1678468278272" duration="8889000" />
     </task>
     <servers />
   </component>

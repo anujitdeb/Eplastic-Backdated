@@ -45,14 +45,23 @@ class DashboardController extends Controller
 //        dd($request->all());
         $request->merge(['password' => Hash::make($request->input('password'))]);
 
-        User::create([
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = $request->password;
+        $user->phone = $request->phone;
+        $user->type = $request->type;
+        $user->address = $request->address;
+        $user->save();
+
+        /*User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'type' => $request->type,
             'password' => $request->password,
             'phone' => $request->phone,
+            'type' => $request->type,
             'address' => $request->address
-        ]);
+        ]);*/
 
         //auth('web')->login($user);
         return redirect()->route('dashboard');
