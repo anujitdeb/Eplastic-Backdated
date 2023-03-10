@@ -23,13 +23,18 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Admin Username</label>
-                    <input type="text" class="input w-full border mt-2 flex-1" placeholder="niamul_hasan" name="username" required>
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Email</label>
+                    <input type="email" class="input w-full border mt-2 flex-1" placeholder="username@gmail.com" name="email">
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Email</label>
-                    <input type="email" class="input w-full border mt-2 flex-1" placeholder="username@gmail.com" name="email">
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Phone</label>
+                    <input type="text" class="input w-full border mt-2 flex-1" placeholder="niamul_hasan" name="phone" required>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center">
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Address</label>
+                    <input type="text" class="input w-full border mt-2 flex-1" placeholder="niamul_hasan" name="address" required>
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
@@ -38,23 +43,24 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Password</label>
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Confirm Password</label>
                     <input type="password" class="input w-full border mt-2 flex-1" placeholder="Confirm Password" name="password_confirmation">
                 </div>
-                
-                @foreach ($roles as $role)
+                <input class="hidden" name="type" value="admin">
+
+                {{--@foreach ($roles as $role)
                     @if ($role->guard_name == 'admin')
                         <div class="flex items-center text-gray-700 mt-5 sm:ml-20 sm:pl-5">
                             <input type="checkbox" class="input border mr-2" value="{{ $role->name }}" name="roles[]" id="permission-{{ $loop->index }}">
                             <label class="cursor-pointer select-none" for="permission-{{ $loop->index }}">{{ $role->name }}</label>
                         </div>
                     @endif
-                @endforeach
+                @endforeach--}}
                 <div class="sm:ml-20 sm:pl-5 mt-5">
                     <input type="submit" class="button bg-theme-1 text-white" value="Create" />
                 </div>
-            </div>    
-        </form>    
+            </div>
+        </form>
     </div>
 </div>
 @endsection

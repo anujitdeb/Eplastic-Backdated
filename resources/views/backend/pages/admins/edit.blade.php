@@ -24,13 +24,18 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Admin Username</label>
-                    <input type="text" class="input w-full border mt-2 flex-1" placeholder="niamul_hasan" name="username" value="{{ $admin->username }}" required>
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Email</label>
+                    <input type="email" class="input w-full border mt-2 flex-1" name="email" value="{{ $admin->email }}">
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Email</label>
-                    <input type="email" class="input w-full border mt-2 flex-1" placeholder="username@gmail.com" name="email" value="{{ $admin->email }}">
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Phone</label>
+                    <input type="text" class="input w-full border mt-2 flex-1" name="phone" value="{{ $admin->phone }}">
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center">
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Address</label>
+                    <input type="text" class="input w-full border mt-2 flex-1" name="address" value="{{ $admin->address }}">
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
@@ -39,7 +44,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Password</label>
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Confirm Password</label>
                     <input type="password" class="input w-full border mt-2 flex-1" placeholder="Confirm Password" name="password_confirmation">
                 </div>
 
@@ -52,7 +57,7 @@
                     @endif
                 @endforeach--}}
                 <div class="sm:ml-20 sm:pl-5 mt-5">
-                    <input type="submit" class="button bg-theme-1 text-white" value="Create" />
+                    <input type="submit" class="button bg-theme-1 text-white" value="Update" />
                 </div>
             </div>
         </form>

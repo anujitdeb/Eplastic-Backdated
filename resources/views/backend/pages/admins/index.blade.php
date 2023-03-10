@@ -13,7 +13,9 @@
             <tr>
                 <th class="whitespace-no-wrap" width="10%"></th>
                 <th class="whitespace-no-wrap">USER NAME</th>
-{{--                <th class="text-center whitespace-no-wrap">ROLES</th>--}}
+                <th class="whitespace-no-wrap">Phone</th>
+                <th class="whitespace-no-wrap">Address</th>
+                {{--                <th class="text-center whitespace-no-wrap">ROLES</th>--}}
                 <th class="text-center whitespace-no-wrap">ACTIONS</th>
             </tr>
         </thead>
@@ -32,6 +34,12 @@
                 <td>
                     <span href="" class="font-medium whitespace-no-wrap">{{ $admin->name }}</span>
                     <div class="text-gray-600 text-xs whitespace-no-wrap">{{ $admin->email }}</div>
+                </td>
+                <td>
+                    <span href="" class="font-medium whitespace-no-wrap">{{ $admin->phone }}</span>
+                </td>
+                <td>
+                    <span href="" class="font-medium whitespace-no-wrap">{{ $admin->address }}</span>
                 </td>
                 {{--<td class="text-center">
                     @foreach ($admin->roles as $role)

@@ -29,12 +29,22 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Phone</label>
+                    <input type="text" class="input w-full border mt-2 flex-1" name="phone" value="{{ $user->phone }}">
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center">
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Address</label>
+                    <input type="text" class="input w-full border mt-2 flex-1" name="address" value="{{ $user->address }}">
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center">
                     <label class="w-full sm:w-20 sm:text-right sm:mr-5">Password</label>
                     <input type="password" class="input w-full border mt-2 flex-1" placeholder="Enter Password" name="password">
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Password</label>
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Confirm Password</label>
                     <input type="password" class="input w-full border mt-2 flex-1" placeholder="Confirm Password" name="password_confirmation">
                 </div>
 
@@ -47,7 +57,7 @@
                     @endif
                 @endforeach--}}
                 <div class="sm:ml-20 sm:pl-5 mt-5">
-                    <input type="submit" class="button bg-theme-1 text-white" value="Create" />
+                    <input type="submit" class="button bg-theme-1 text-white" value="Update" />
                 </div>
             </div>
         </form>

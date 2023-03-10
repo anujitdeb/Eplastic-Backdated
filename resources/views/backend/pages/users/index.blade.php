@@ -7,12 +7,15 @@
 
 @section('admin-section')
 @include('backend.layouts.partials.alerts')
-<a href="{{ route('dashboard.users.create') }}" style="max-width: 180px" class="button mt-8 w-100 mr-2 mb-2 flex bg-theme-1 text-white"> <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle mx-auto"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg> Create a New User </a>
+{{--<a href="{{ route('dashboard.users.create') }}" style="max-width: 180px" class="button mt-8 w-100 mr-2 mb-2 flex bg-theme-1 text-white"> <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle mx-auto"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg> Create a New User </a>--}}
     <table class="table table-report -mt-2">
         <thead>
             <tr>
                 <th class="whitespace-no-wrap" width="10%"></th>
                 <th class="whitespace-no-wrap">USER NAME</th>
+                <th class="whitespace-no-wrap">Phone</th>
+                <th class="whitespace-no-wrap">Address</th>
+                <th class="whitespace-no-wrap">Type</th>
 {{--                <th class="text-center whitespace-no-wrap">ROLES</th>--}}
                 <th class="text-center whitespace-no-wrap">ACTIONS</th>
             </tr>
@@ -32,6 +35,15 @@
                 <td>
                     <span href="" class="font-medium whitespace-no-wrap">{{ $user->name }}</span>
                     <div class="text-gray-600 text-xs whitespace-no-wrap">{{ $user->email }}</div>
+                </td>
+                <td>
+                    <span href="" class="font-medium whitespace-no-wrap">{{ $user->phone }}</span>
+                </td>
+                <td>
+                    <span href="" class="font-medium whitespace-no-wrap">{{ $user->address }}</span>
+                </td>
+                <td>
+                    <span href="" class="font-medium whitespace-no-wrap">{{ $user->type }}</span>
                 </td>
                 {{--<td class="text-center">
                     @foreach ($user->roles as $role)

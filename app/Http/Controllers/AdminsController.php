@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\createUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -61,7 +62,7 @@ class AdminsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(createUserRequest $request)
     {
         //Check and guard the permission
         /*if (is_null($this->user) || !$this->user->can('admin.create')) {
@@ -69,23 +70,26 @@ class AdminsController extends Controller
         }*/
 
         //Validate form
-        $request->validate([
+        /*$request->validate([
             'name' =>  'required|max:50',
             'email' => 'required|max:60|unique:admins',
             'username' => 'required|max:60|unique:admins',
             'password' => 'required|min:8|confirmed'
-        ]);
+        ]);*/
 
-        $admin = new Admin();
+
+        $admin = new User();
         $admin->name = $request->name;
         $admin->email = $request->email;
-        $admin->username = $request->username;
+        $admin->phone = $request->phone;
+        $admin->type = $request->type;
+        $admin->address = $request->address;
         $admin->password = Hash::make($request->password);
         $admin->save();
 
-        if (!empty($request->roles)) {
+        /*if (!empty($request->roles)) {
             $admin->assignRole($request->roles);
-        }
+        }*/
         session()->flash('success', 'Admin has been Created!!');
         return back();
     }
@@ -114,7 +118,7 @@ class AdminsController extends Controller
             abort(403, 'Unauthorized Access!');
         }*/
         //
-        $admin = Admin::find($id);
+        $admin = User::find($id);
         $roles = Role::all();
         return view('backend.pages.admins.edit', compact('admin', 'roles'));
     }
