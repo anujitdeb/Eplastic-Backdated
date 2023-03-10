@@ -1,0 +1,307 @@
+Index: app/Http/Controllers/AdminsController.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n\r\nnamespace App\\Http\\Controllers;\r\n\r\nuse App\\Models\\User;\r\nuse Illuminate\\Http\\Request;\r\n\r\nuse Spatie\\Permission\\Models\\Role;\r\nuse Spatie\\Permission\\Models\\Permission;\r\nuse App\\Models\\Admin;\r\nuse DB;\r\nuse Illuminate\\Support\\Facades\\Hash;\r\nuse Illuminate\\Support\\Facades\\Auth;\r\n\r\nclass AdminsController extends Controller\r\n{\r\n    public $user;\r\n\r\n    public function __construct()\r\n    {\r\n        $this->middleware(function ($request, $next) {\r\n            $this->user = Auth::guard('admin')->user();\r\n            return $next($request);\r\n        });\r\n    }\r\n    /**\r\n     * Display a listing of the resource.\r\n     *\r\n     * @return \\Illuminate\\Http\\Response\r\n     */\r\n    public function index()\r\n    {\r\n        //Check and guard the permission\r\n        /*if (is_null($this->user) || !$this->user->can('admin.view')) {\r\n            abort(403, 'Unauthorized Access!');\r\n        }*/\r\n        //\r\n        $admins = User::where('type', 'admin')->get();\r\n        return view('backend.pages.admins.index', compact('admins'));\r\n    }\r\n\r\n    /**\r\n     * Show the form for creating a new resource.\r\n     *\r\n     * @return \\Illuminate\\Http\\Response\r\n     */\r\n    public function create()\r\n    {\r\n        //Check and guard the permission\r\n        /*if (is_null($this->user) || !$this->user->can('admin.create')) {\r\n            abort(403, 'Unauthorized Access!');\r\n        }*/\r\n        //\r\n        $roles = Role::all();\r\n        return view('backend.pages.admins.create', compact('roles'));\r\n    }\r\n\r\n    /**\r\n     * Store a newly created resource in storage.\r\n     *\r\n     * @param  \\Illuminate\\Http\\Request  $request\r\n     * @return \\Illuminate\\Http\\Response\r\n     */\r\n    public function store(Request $request)\r\n    {\r\n        //Check and guard the permission\r\n        /*if (is_null($this->user) || !$this->user->can('admin.create')) {\r\n            abort(403, 'Unauthorized Access!');\r\n        }*/\r\n\r\n        //Validate form\r\n        $request->validate([\r\n            'name' =>  'required|max:50',\r\n            'email' => 'required|max:60|unique:admins',\r\n            'username' => 'required|max:60|unique:admins',\r\n            'password' => 'required|min:8|confirmed'\r\n        ]);\r\n\r\n        $admin = new Admin();\r\n        $admin->name = $request->name;\r\n        $admin->email = $request->email;\r\n        $admin->username = $request->username;\r\n        $admin->password = Hash::make($request->password);\r\n        $admin->save();\r\n\r\n        if (!empty($request->roles)) {\r\n            $admin->assignRole($request->roles);\r\n        }\r\n        session()->flash('success', 'Admin has been Created!!');\r\n        return back();\r\n    }\r\n\r\n    /**\r\n     * Display the specified resource.\r\n     *\r\n     * @param  int  $id\r\n     * @return \\Illuminate\\Http\\Response\r\n     */\r\n    public function show($id)\r\n    {\r\n        //\r\n    }\r\n\r\n    /**\r\n     * Show the form for editing the specified resource.\r\n     *\r\n     * @param  int  $id\r\n     * @return \\Illuminate\\Http\\Response\r\n     */\r\n    public function edit($id)\r\n    {\r\n        //Check and guard the permission\r\n        /*if (is_null($this->user) || !$this->user->can('admin.edit')) {\r\n            abort(403, 'Unauthorized Access!');\r\n        }*/\r\n        //\r\n        $admin = Admin::find($id);\r\n        $roles = Role::all();\r\n        return view('backend.pages.admins.edit', compact('admin', 'roles'));\r\n    }\r\n\r\n    /**\r\n     * Update the specified resource in storage.\r\n     *\r\n     * @param  \\Illuminate\\Http\\Request  $request\r\n     * @param  int  $id\r\n     * @return \\Illuminate\\Http\\Response\r\n     */\r\n    public function update(Request $request, $id)\r\n    {\r\n        //Check and guard the permission\r\n        /*if (is_null($this->user) || !$this->user->can('admin.edit')) {\r\n            abort(403, 'Unauthorized Access!');\r\n        }*/\r\n\r\n        $admin = Admin::find($id);\r\n        //Validate form\r\n        $request->validate([\r\n            'name' =>  'required|max:50',\r\n            'email' => 'required|max:60|unique:admins,email,' . $id,\r\n            'password' => 'nullable|min:8|confirmed'\r\n        ]);\r\n\r\n\r\n        $admin->name = $request->name;\r\n        $admin->email = $request->email;\r\n        $admin->username = $request->username;\r\n        if (is_null($admin->password)) {\r\n            $admin->password = Hash::make($request->password);\r\n        }\r\n        $admin->save();\r\n\r\n        $admin->roles()->detach();\r\n        if ($request->roles) {\r\n            $admin->assignRole($request->roles);\r\n        }\r\n        session()->flash('success', 'Admin has been Updated!');\r\n        return back();\r\n    }\r\n\r\n    /**\r\n     * Remove the specified resource from storage.\r\n     *\r\n     * @param  int  $id\r\n     * @return \\Illuminate\\Http\\Response\r\n     */\r\n    public function destroy($id)\r\n    {\r\n        //Check and guard the permission\r\n        /*if (is_null($this->user) || !$this->user->can('admin.delete')) {\r\n            abort(403, 'Unauthorized Access!');\r\n        }*/\r\n\r\n        //\r\n        $admin = Admin::find($id);\r\n        if (!is_null($admin)) {\r\n            $admin->delete();\r\n        }\r\n\r\n        session()->flash('success', 'Admin has been Deleted!!');\r\n        return back();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/Http/Controllers/AdminsController.php b/app/Http/Controllers/AdminsController.php
+--- a/app/Http/Controllers/AdminsController.php	(revision ce328b717b196dba88dfd6b4be0b0e68dac42bd3)
++++ b/app/Http/Controllers/AdminsController.php	(date 1678481541841)
+@@ -2,6 +2,7 @@
+ 
+ namespace App\Http\Controllers;
+ 
++use App\Http\Requests\createUserRequest;
+ use App\Models\User;
+ use Illuminate\Http\Request;
+ 
+@@ -61,7 +62,7 @@
+      * @param  \Illuminate\Http\Request  $request
+      * @return \Illuminate\Http\Response
+      */
+-    public function store(Request $request)
++    public function store(createUserRequest $request)
+     {
+         //Check and guard the permission
+         /*if (is_null($this->user) || !$this->user->can('admin.create')) {
+@@ -69,23 +70,26 @@
+         }*/
+ 
+         //Validate form
+-        $request->validate([
++        /*$request->validate([
+             'name' =>  'required|max:50',
+             'email' => 'required|max:60|unique:admins',
+             'username' => 'required|max:60|unique:admins',
+             'password' => 'required|min:8|confirmed'
+-        ]);
++        ]);*/
+ 
+-        $admin = new Admin();
++
++        $admin = new User();
+         $admin->name = $request->name;
+         $admin->email = $request->email;
+-        $admin->username = $request->username;
++        $admin->phone = $request->phone;
++        $admin->type = $request->type;
++        $admin->address = $request->address;
+         $admin->password = Hash::make($request->password);
+         $admin->save();
+ 
+-        if (!empty($request->roles)) {
++        /*if (!empty($request->roles)) {
+             $admin->assignRole($request->roles);
+-        }
++        }*/
+         session()->flash('success', 'Admin has been Created!!');
+         return back();
+     }
+@@ -114,7 +118,7 @@
+             abort(403, 'Unauthorized Access!');
+         }*/
+         //
+-        $admin = Admin::find($id);
++        $admin = User::find($id);
+         $roles = Role::all();
+         return view('backend.pages.admins.edit', compact('admin', 'roles'));
+     }
+Index: resources/views/backend/pages/admins/create.blade.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@section('page-title')\r\n    Create Admin\r\n@endsection\r\n\r\n\r\n@extends('backend.layouts.main')\r\n\r\n@section('admin-section')\r\n@include('backend.layouts.partials.alerts')\r\n<div class=\"intro-y box mt-5\">\r\n    <div class=\"flex flex-col sm:flex-row items-center p-5 border-b border-gray-200\">\r\n        <h2 class=\"font-medium text-base mr-auto\">\r\n            Create Admin\r\n        </h2>\r\n    </div>\r\n    <div class=\"p-5\" id=\"horizontal-form\">\r\n        <form action=\"{{ route('dashboard.admins.store') }}\" method=\"POST\">\r\n            @csrf\r\n            <div class=\"preview\" style=\"\">\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Admin Name</label>\r\n                    <input type=\"text\" class=\"input w-full border mt-2 flex-1\" placeholder=\"Niamul Hasan\" name=\"name\">\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Admin Username</label>\r\n                    <input type=\"text\" class=\"input w-full border mt-2 flex-1\" placeholder=\"niamul_hasan\" name=\"username\" required>\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Email</label>\r\n                    <input type=\"email\" class=\"input w-full border mt-2 flex-1\" placeholder=\"username@gmail.com\" name=\"email\">\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Password</label>\r\n                    <input type=\"password\" class=\"input w-full border mt-2 flex-1\" placeholder=\"Enter Password\" name=\"password\">\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Password</label>\r\n                    <input type=\"password\" class=\"input w-full border mt-2 flex-1\" placeholder=\"Confirm Password\" name=\"password_confirmation\">\r\n                </div>\r\n                \r\n                @foreach ($roles as $role)\r\n                    @if ($role->guard_name == 'admin')\r\n                        <div class=\"flex items-center text-gray-700 mt-5 sm:ml-20 sm:pl-5\">\r\n                            <input type=\"checkbox\" class=\"input border mr-2\" value=\"{{ $role->name }}\" name=\"roles[]\" id=\"permission-{{ $loop->index }}\">\r\n                            <label class=\"cursor-pointer select-none\" for=\"permission-{{ $loop->index }}\">{{ $role->name }}</label>\r\n                        </div>\r\n                    @endif\r\n                @endforeach\r\n                <div class=\"sm:ml-20 sm:pl-5 mt-5\">\r\n                    <input type=\"submit\" class=\"button bg-theme-1 text-white\" value=\"Create\" />\r\n                </div>\r\n            </div>    \r\n        </form>    \r\n    </div>\r\n</div>\r\n@endsection
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/views/backend/pages/admins/create.blade.php b/resources/views/backend/pages/admins/create.blade.php
+--- a/resources/views/backend/pages/admins/create.blade.php	(revision ce328b717b196dba88dfd6b4be0b0e68dac42bd3)
++++ b/resources/views/backend/pages/admins/create.blade.php	(date 1678481522296)
+@@ -23,13 +23,18 @@
+                 </div>
+ 
+                 <div class="flex flex-col sm:flex-row items-center">
+-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Admin Username</label>
+-                    <input type="text" class="input w-full border mt-2 flex-1" placeholder="niamul_hasan" name="username" required>
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Email</label>
++                    <input type="email" class="input w-full border mt-2 flex-1" placeholder="username@gmail.com" name="email">
++                </div>
++
++                <div class="flex flex-col sm:flex-row items-center">
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Phone</label>
++                    <input type="text" class="input w-full border mt-2 flex-1" placeholder="niamul_hasan" name="phone" required>
+                 </div>
+ 
+                 <div class="flex flex-col sm:flex-row items-center">
+-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Email</label>
+-                    <input type="email" class="input w-full border mt-2 flex-1" placeholder="username@gmail.com" name="email">
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Address</label>
++                    <input type="text" class="input w-full border mt-2 flex-1" placeholder="niamul_hasan" name="address" required>
+                 </div>
+ 
+                 <div class="flex flex-col sm:flex-row items-center">
+@@ -38,23 +43,24 @@
+                 </div>
+ 
+                 <div class="flex flex-col sm:flex-row items-center">
+-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Password</label>
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Confirm Password</label>
+                     <input type="password" class="input w-full border mt-2 flex-1" placeholder="Confirm Password" name="password_confirmation">
+                 </div>
+-                
+-                @foreach ($roles as $role)
++                <input class="hidden" name="type" value="admin">
++
++                {{--@foreach ($roles as $role)
+                     @if ($role->guard_name == 'admin')
+                         <div class="flex items-center text-gray-700 mt-5 sm:ml-20 sm:pl-5">
+                             <input type="checkbox" class="input border mr-2" value="{{ $role->name }}" name="roles[]" id="permission-{{ $loop->index }}">
+                             <label class="cursor-pointer select-none" for="permission-{{ $loop->index }}">{{ $role->name }}</label>
+                         </div>
+                     @endif
+-                @endforeach
++                @endforeach--}}
+                 <div class="sm:ml-20 sm:pl-5 mt-5">
+                     <input type="submit" class="button bg-theme-1 text-white" value="Create" />
+                 </div>
+-            </div>    
+-        </form>    
++            </div>
++        </form>
+     </div>
+ </div>
+-@endsection
+\ No newline at end of file
++@endsection
+Index: resources/views/backend/pages/admins/edit.blade.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@section('page-title')\r\n    Edit Admin\r\n@endsection\r\n\r\n\r\n@extends('backend.layouts.main')\r\n\r\n@section('admin-section')\r\n@include('backend.layouts.partials.alerts')\r\n<div class=\"intro-y box mt-5\">\r\n    <div class=\"flex flex-col sm:flex-row items-center p-5 border-b border-gray-200\">\r\n        <h2 class=\"font-medium text-base mr-auto\">\r\n            Edit Admin\r\n        </h2>\r\n    </div>\r\n    <div class=\"p-5\" id=\"horizontal-form\">\r\n        <form action=\"{{ route('dashboard.admins.update', $admin->id) }}\" method=\"POST\">\r\n            @method('PUT')\r\n            @csrf\r\n            <div class=\"preview\" style=\"\">\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Admin Name</label>\r\n                    <input type=\"text\" class=\"input w-full border mt-2 flex-1\" placeholder=\"Niamul Hasan\" name=\"name\" value=\" {{ $admin->name }}\">\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Admin Username</label>\r\n                    <input type=\"text\" class=\"input w-full border mt-2 flex-1\" placeholder=\"niamul_hasan\" name=\"username\" value=\"{{ $admin->username }}\" required>\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Email</label>\r\n                    <input type=\"email\" class=\"input w-full border mt-2 flex-1\" placeholder=\"username@gmail.com\" name=\"email\" value=\"{{ $admin->email }}\">\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Password</label>\r\n                    <input type=\"password\" class=\"input w-full border mt-2 flex-1\" placeholder=\"Enter Password\" name=\"password\">\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Password</label>\r\n                    <input type=\"password\" class=\"input w-full border mt-2 flex-1\" placeholder=\"Confirm Password\" name=\"password_confirmation\">\r\n                </div>\r\n\r\n                {{--@foreach ($roles as $role)\r\n                    @if ($role->guard_name == 'admin')\r\n                        <div class=\"flex items-center text-gray-700 mt-5 sm:ml-20 sm:pl-5\">\r\n                            <input type=\"checkbox\" class=\"input border mr-2\" value=\"{{ $role->name }}\" name=\"roles[]\" id=\"permission-{{ $loop->index }}\" {{ $admin->hasRole($role) ? 'checked' : ''}}>\r\n                            <label class=\"cursor-pointer select-none\" for=\"permission-{{ $loop->index }}\">{{ $role->name }}</label>\r\n                        </div>\r\n                    @endif\r\n                @endforeach--}}\r\n                <div class=\"sm:ml-20 sm:pl-5 mt-5\">\r\n                    <input type=\"submit\" class=\"button bg-theme-1 text-white\" value=\"Create\" />\r\n                </div>\r\n            </div>\r\n        </form>\r\n    </div>\r\n</div>\r\n@endsection\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/views/backend/pages/admins/edit.blade.php b/resources/views/backend/pages/admins/edit.blade.php
+--- a/resources/views/backend/pages/admins/edit.blade.php	(revision ce328b717b196dba88dfd6b4be0b0e68dac42bd3)
++++ b/resources/views/backend/pages/admins/edit.blade.php	(date 1678480886359)
+@@ -24,13 +24,18 @@
+                 </div>
+ 
+                 <div class="flex flex-col sm:flex-row items-center">
+-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Admin Username</label>
+-                    <input type="text" class="input w-full border mt-2 flex-1" placeholder="niamul_hasan" name="username" value="{{ $admin->username }}" required>
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Email</label>
++                    <input type="email" class="input w-full border mt-2 flex-1" name="email" value="{{ $admin->email }}">
+                 </div>
+ 
+                 <div class="flex flex-col sm:flex-row items-center">
+-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Email</label>
+-                    <input type="email" class="input w-full border mt-2 flex-1" placeholder="username@gmail.com" name="email" value="{{ $admin->email }}">
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Phone</label>
++                    <input type="text" class="input w-full border mt-2 flex-1" name="phone" value="{{ $admin->phone }}">
++                </div>
++
++                <div class="flex flex-col sm:flex-row items-center">
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Address</label>
++                    <input type="text" class="input w-full border mt-2 flex-1" name="address" value="{{ $admin->address }}">
+                 </div>
+ 
+                 <div class="flex flex-col sm:flex-row items-center">
+@@ -39,7 +44,7 @@
+                 </div>
+ 
+                 <div class="flex flex-col sm:flex-row items-center">
+-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Password</label>
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Confirm Password</label>
+                     <input type="password" class="input w-full border mt-2 flex-1" placeholder="Confirm Password" name="password_confirmation">
+                 </div>
+ 
+@@ -52,7 +57,7 @@
+                     @endif
+                 @endforeach--}}
+                 <div class="sm:ml-20 sm:pl-5 mt-5">
+-                    <input type="submit" class="button bg-theme-1 text-white" value="Create" />
++                    <input type="submit" class="button bg-theme-1 text-white" value="Update" />
+                 </div>
+             </div>
+         </form>
+Index: resources/views/backend/pages/users/edit.blade.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@section('page-title')\r\n    Edit User\r\n@endsection\r\n\r\n\r\n@extends('backend.layouts.main')\r\n\r\n@section('admin-section')\r\n@include('backend.layouts.partials.alerts')\r\n<div class=\"intro-y box mt-5\">\r\n    <div class=\"flex flex-col sm:flex-row items-center p-5 border-b border-gray-200\">\r\n        <h2 class=\"font-medium text-base mr-auto\">\r\n            Edit User\r\n        </h2>\r\n    </div>\r\n    <div class=\"p-5\" id=\"horizontal-form\">\r\n        <form action=\"{{ route('dashboard.users.update', $user->id) }}\" method=\"POST\">\r\n            @method('PUT')\r\n            @csrf\r\n            <div class=\"preview\" style=\"\">\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">User Name</label>\r\n                    <input type=\"text\" class=\"input w-full border mt-2 flex-1\" placeholder=\"Niamul Hasan\" name=\"name\" value=\" {{ $user->name }}\">\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Email</label>\r\n                    <input type=\"email\" class=\"input w-full border mt-2 flex-1\" placeholder=\"username@gmail.com\" name=\"email\" value=\"{{ $user->email }}\">\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Password</label>\r\n                    <input type=\"password\" class=\"input w-full border mt-2 flex-1\" placeholder=\"Enter Password\" name=\"password\">\r\n                </div>\r\n\r\n                <div class=\"flex flex-col sm:flex-row items-center\">\r\n                    <label class=\"w-full sm:w-20 sm:text-right sm:mr-5\">Password</label>\r\n                    <input type=\"password\" class=\"input w-full border mt-2 flex-1\" placeholder=\"Confirm Password\" name=\"password_confirmation\">\r\n                </div>\r\n\r\n                {{--@foreach ($roles as $role)\r\n                    @if ($role->guard_name == 'web')\r\n                        <div class=\"flex items-center text-gray-700 mt-5 sm:ml-20 sm:pl-5\">\r\n                            <input type=\"checkbox\" class=\"input border mr-2\" value=\"{{ $role->name }}\" name=\"roles[]\" id=\"permission-{{ $loop->index }}\" {{ $user->hasRole($role) ? 'checked' : ''}}>\r\n                            <label class=\"cursor-pointer select-none\" for=\"permission-{{ $loop->index }}\">{{ $role->name }}</label>\r\n                        </div>\r\n                    @endif\r\n                @endforeach--}}\r\n                <div class=\"sm:ml-20 sm:pl-5 mt-5\">\r\n                    <input type=\"submit\" class=\"button bg-theme-1 text-white\" value=\"Create\" />\r\n                </div>\r\n            </div>\r\n        </form>\r\n    </div>\r\n</div>\r\n@endsection\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/views/backend/pages/users/edit.blade.php b/resources/views/backend/pages/users/edit.blade.php
+--- a/resources/views/backend/pages/users/edit.blade.php	(revision ce328b717b196dba88dfd6b4be0b0e68dac42bd3)
++++ b/resources/views/backend/pages/users/edit.blade.php	(date 1678480886376)
+@@ -28,13 +28,23 @@
+                     <input type="email" class="input w-full border mt-2 flex-1" placeholder="username@gmail.com" name="email" value="{{ $user->email }}">
+                 </div>
+ 
++                <div class="flex flex-col sm:flex-row items-center">
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Phone</label>
++                    <input type="text" class="input w-full border mt-2 flex-1" name="phone" value="{{ $user->phone }}">
++                </div>
++
++                <div class="flex flex-col sm:flex-row items-center">
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Address</label>
++                    <input type="text" class="input w-full border mt-2 flex-1" name="address" value="{{ $user->address }}">
++                </div>
++
+                 <div class="flex flex-col sm:flex-row items-center">
+                     <label class="w-full sm:w-20 sm:text-right sm:mr-5">Password</label>
+                     <input type="password" class="input w-full border mt-2 flex-1" placeholder="Enter Password" name="password">
+                 </div>
+ 
+                 <div class="flex flex-col sm:flex-row items-center">
+-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Password</label>
++                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Confirm Password</label>
+                     <input type="password" class="input w-full border mt-2 flex-1" placeholder="Confirm Password" name="password_confirmation">
+                 </div>
+ 
+@@ -47,7 +57,7 @@
+                     @endif
+                 @endforeach--}}
+                 <div class="sm:ml-20 sm:pl-5 mt-5">
+-                    <input type="submit" class="button bg-theme-1 text-white" value="Create" />
++                    <input type="submit" class="button bg-theme-1 text-white" value="Update" />
+                 </div>
+             </div>
+         </form>
+Index: resources/views/backend/pages/admins/index.blade.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@section('page-title')\r\n    Admins Control\r\n@endsection\r\n\r\n\r\n@extends('backend.layouts.main')\r\n\r\n@section('admin-section')\r\n@include('backend.layouts.partials.alerts')\r\n<a href=\"{{ route('dashboard.admins.create') }}\" style=\"max-width: 220px\" class=\"button mt-8 w-100 mr-2 mb-2 flex bg-theme-1 text-white\"> <svg class=\"mr-2\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-plus-circle mx-auto\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"16\"></line><line x1=\"8\" y1=\"12\" x2=\"16\" y2=\"12\"></line></svg> Create a New Admin </a>\r\n    <table class=\"table table-report -mt-2\">\r\n        <thead>\r\n            <tr>\r\n                <th class=\"whitespace-no-wrap\" width=\"10%\"></th>\r\n                <th class=\"whitespace-no-wrap\">USER NAME</th>\r\n{{--                <th class=\"text-center whitespace-no-wrap\">ROLES</th>--}}\r\n                <th class=\"text-center whitespace-no-wrap\">ACTIONS</th>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n\r\n            @foreach ($admins as $admin)\r\n            <tr class=\"intro-x\">\r\n                <td class=\"w-40\">\r\n                    <div class=\"flex\">\r\n                        <div class=\"w-10 h-10 image-fit\">\r\n                            <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-admins mx-auto\"><path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"></path><circle cx=\"9\" cy=\"7\" r=\"4\"></circle><path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"></path><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"></path></svg>\r\n                        </div>\r\n\r\n                    </div>\r\n                </td>\r\n                <td>\r\n                    <span href=\"\" class=\"font-medium whitespace-no-wrap\">{{ $admin->name }}</span>\r\n                    <div class=\"text-gray-600 text-xs whitespace-no-wrap\">{{ $admin->email }}</div>\r\n                </td>\r\n                {{--<td class=\"text-center\">\r\n                    @foreach ($admin->roles as $role)\r\n                    <span class=\"py-0 px-2 rounded-full text-xs bg-green-200 text-gray-600 cursor-pointer ml-auto truncate\">{{$role->name}}</span>\r\n                    @endforeach\r\n\r\n                </td>--}}\r\n                <td class=\"table-report__action w-56\">\r\n                    <div class=\"flex justify-center items-center\">\r\n                        <a class=\"flex items-center mr-3\" href=\"{{ route('dashboard.admins.edit', $admin->id) }}\"> <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-check-square w-4 h-4 mr-1\"><polyline points=\"9 11 12 14 22 4\"></polyline><path d=\"M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11\"></path></svg> Edit </a>\r\n\r\n                        <a class=\"flex items-center text-theme-6\" href=\"{{ route('dashboard.roles.destroy', $admin->id) }}\" onclick=\"event.preventDefault(); document.getElementById('delete-form-{{ $admin->id }}').submit()\"> <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-trash-2 w-4 h-4 mr-1\"><polyline points=\"3 6 5 6 21 6\"></polyline><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"></path><line x1=\"10\" y1=\"11\" x2=\"10\" y2=\"17\"></line><line x1=\"14\" y1=\"11\" x2=\"14\" y2=\"17\"></line></svg> Delete </a>\r\n                        <form id=\"delete-form-{{$admin->id}}\" action=\"{{ route('dashboard.admins.destroy', $admin->id) }}\" method=\"POST\" style=\"display: none\">\r\n                            @method('DELETE')\r\n                            @csrf\r\n                        </form>\r\n                    </div>\r\n                </td>\r\n            </tr>\r\n            @endforeach\r\n        </tbody>\r\n    </table>\r\n@endsection\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/views/backend/pages/admins/index.blade.php b/resources/views/backend/pages/admins/index.blade.php
+--- a/resources/views/backend/pages/admins/index.blade.php	(revision ce328b717b196dba88dfd6b4be0b0e68dac42bd3)
++++ b/resources/views/backend/pages/admins/index.blade.php	(date 1678480458736)
+@@ -13,7 +13,9 @@
+             <tr>
+                 <th class="whitespace-no-wrap" width="10%"></th>
+                 <th class="whitespace-no-wrap">USER NAME</th>
+-{{--                <th class="text-center whitespace-no-wrap">ROLES</th>--}}
++                <th class="whitespace-no-wrap">Phone</th>
++                <th class="whitespace-no-wrap">Address</th>
++                {{--                <th class="text-center whitespace-no-wrap">ROLES</th>--}}
+                 <th class="text-center whitespace-no-wrap">ACTIONS</th>
+             </tr>
+         </thead>
+@@ -32,6 +34,12 @@
+                 <td>
+                     <span href="" class="font-medium whitespace-no-wrap">{{ $admin->name }}</span>
+                     <div class="text-gray-600 text-xs whitespace-no-wrap">{{ $admin->email }}</div>
++                </td>
++                <td>
++                    <span href="" class="font-medium whitespace-no-wrap">{{ $admin->phone }}</span>
++                </td>
++                <td>
++                    <span href="" class="font-medium whitespace-no-wrap">{{ $admin->address }}</span>
+                 </td>
+                 {{--<td class="text-center">
+                     @foreach ($admin->roles as $role)
+Index: resources/views/backend/pages/users/index.blade.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@section('page-title')\r\n    Users Control\r\n@endsection\r\n\r\n\r\n@extends('backend.layouts.main')\r\n\r\n@section('admin-section')\r\n@include('backend.layouts.partials.alerts')\r\n<a href=\"{{ route('dashboard.users.create') }}\" style=\"max-width: 180px\" class=\"button mt-8 w-100 mr-2 mb-2 flex bg-theme-1 text-white\"> <svg class=\"mr-2\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-plus-circle mx-auto\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"16\"></line><line x1=\"8\" y1=\"12\" x2=\"16\" y2=\"12\"></line></svg> Create a New User </a>\r\n    <table class=\"table table-report -mt-2\">\r\n        <thead>\r\n            <tr>\r\n                <th class=\"whitespace-no-wrap\" width=\"10%\"></th>\r\n                <th class=\"whitespace-no-wrap\">USER NAME</th>\r\n{{--                <th class=\"text-center whitespace-no-wrap\">ROLES</th>--}}\r\n                <th class=\"text-center whitespace-no-wrap\">ACTIONS</th>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n\r\n            @foreach ($users as $user)\r\n            <tr class=\"intro-x\">\r\n                <td class=\"w-40\">\r\n                    <div class=\"flex\">\r\n                        <div class=\"w-10 h-10 image-fit\">\r\n                            <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-users mx-auto\"><path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"></path><circle cx=\"9\" cy=\"7\" r=\"4\"></circle><path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"></path><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"></path></svg>\r\n                        </div>\r\n\r\n                    </div>\r\n                </td>\r\n                <td>\r\n                    <span href=\"\" class=\"font-medium whitespace-no-wrap\">{{ $user->name }}</span>\r\n                    <div class=\"text-gray-600 text-xs whitespace-no-wrap\">{{ $user->email }}</div>\r\n                </td>\r\n                {{--<td class=\"text-center\">\r\n                    @foreach ($user->roles as $role)\r\n                    <span class=\"py-0 px-2 rounded-full text-xs bg-green-200 text-gray-600 cursor-pointer ml-auto truncate\">{{$role->name}}</span>\r\n                    @endforeach\r\n\r\n                </td>--}}\r\n                <td class=\"table-report__action w-56\">\r\n                    <div class=\"flex justify-center items-center\">\r\n                        <a class=\"flex items-center mr-3\" href=\"{{ route('dashboard.users.edit', $user->id) }}\"> <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-check-square w-4 h-4 mr-1\"><polyline points=\"9 11 12 14 22 4\"></polyline><path d=\"M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11\"></path></svg> Edit </a>\r\n\r\n                        <a class=\"flex items-center text-theme-6\" href=\"{{ route('dashboard.roles.destroy', $user->id) }}\" onclick=\"event.preventDefault(); document.getElementById('delete-form-{{ $user->id }}').submit()\"> <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-trash-2 w-4 h-4 mr-1\"><polyline points=\"3 6 5 6 21 6\"></polyline><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"></path><line x1=\"10\" y1=\"11\" x2=\"10\" y2=\"17\"></line><line x1=\"14\" y1=\"11\" x2=\"14\" y2=\"17\"></line></svg> Delete </a>\r\n                        <form id=\"delete-form-{{$user->id}}\" action=\"{{ route('dashboard.users.destroy', $user->id) }}\" method=\"POST\" style=\"display: none\">\r\n                            @method('DELETE')\r\n                            @csrf\r\n                        </form>\r\n                    </div>\r\n                </td>\r\n            </tr>\r\n            @endforeach\r\n        </tbody>\r\n    </table>\r\n@endsection\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/views/backend/pages/users/index.blade.php b/resources/views/backend/pages/users/index.blade.php
+--- a/resources/views/backend/pages/users/index.blade.php	(revision ce328b717b196dba88dfd6b4be0b0e68dac42bd3)
++++ b/resources/views/backend/pages/users/index.blade.php	(date 1678480335077)
+@@ -7,12 +7,15 @@
+ 
+ @section('admin-section')
+ @include('backend.layouts.partials.alerts')
+-<a href="{{ route('dashboard.users.create') }}" style="max-width: 180px" class="button mt-8 w-100 mr-2 mb-2 flex bg-theme-1 text-white"> <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle mx-auto"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg> Create a New User </a>
++{{--<a href="{{ route('dashboard.users.create') }}" style="max-width: 180px" class="button mt-8 w-100 mr-2 mb-2 flex bg-theme-1 text-white"> <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle mx-auto"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg> Create a New User </a>--}}
+     <table class="table table-report -mt-2">
+         <thead>
+             <tr>
+                 <th class="whitespace-no-wrap" width="10%"></th>
+                 <th class="whitespace-no-wrap">USER NAME</th>
++                <th class="whitespace-no-wrap">Phone</th>
++                <th class="whitespace-no-wrap">Address</th>
++                <th class="whitespace-no-wrap">Type</th>
+ {{--                <th class="text-center whitespace-no-wrap">ROLES</th>--}}
+                 <th class="text-center whitespace-no-wrap">ACTIONS</th>
+             </tr>
+@@ -32,6 +35,15 @@
+                 <td>
+                     <span href="" class="font-medium whitespace-no-wrap">{{ $user->name }}</span>
+                     <div class="text-gray-600 text-xs whitespace-no-wrap">{{ $user->email }}</div>
++                </td>
++                <td>
++                    <span href="" class="font-medium whitespace-no-wrap">{{ $user->phone }}</span>
++                </td>
++                <td>
++                    <span href="" class="font-medium whitespace-no-wrap">{{ $user->address }}</span>
++                </td>
++                <td>
++                    <span href="" class="font-medium whitespace-no-wrap">{{ $user->type }}</span>
+                 </td>
+                 {{--<td class="text-center">
+                     @foreach ($user->roles as $role)

@@ -23,8 +23,8 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
-                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Email</label>
-                    <input type="email" class="input w-full border mt-2 flex-1" placeholder="username@gmail.com" name="email">
+                    <label class="w-full sm:w-20 sm:text-right sm:mr-5">Address</label>
+                    <input type="text" class="input w-full border mt-2 flex-1" placeholder="niamul_hasan" name="address" required>
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center">
